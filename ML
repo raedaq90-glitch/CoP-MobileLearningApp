@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CoP Mobile Learning – KSA Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- AUTH / ONBOARDING -->
+    <div id="view-auth" class="card glass">
+      <div class="header">
+        <div>
+          <h1>CoP Mobile Learning</h1>
+          <div class="muted">Supervised by Ministry of Education – KSA (Prototype)</div>
+        </div>
+        <div class="nav">
+          <span class="chip">Prototype • Offline-ready</span>
+        </div>
+      </div>
+      <div class="section">
+        <div class="row">
+          <div class="col">
+            <h2>Create Membership</h2>
+            <p class="muted">Sign up using your official email. Roles: <span class="kbd">Teacher</span> or <span class="kbd">Student</span>.</p>
+            <form id="form-signup">
+              <label>Full name</label>
+              <input class="input" name="name" required placeholder="e.g., Aisha Al-Zahrani" />
+              <label>Official email (moe.gov.sa or edu.sa)</label>
+              <input class="input" name="email" required type="email" placeholder="name@moe.gov.sa" />
+              <label>Role</label>
+              <select name="role" class="input" required>
+                <option value="Teacher">Teacher</option>
+                <option value="Student">Student</option>
+              </select>
+              <div style="height:10px"></div>
+              <button class="btn icon" type="submit">▶ Create membership</button>
+            </form>
+            <div class="hr"></div>
+            <p class="small muted">Demo note: email domain enforcement is relaxed in prototype but will warn if not <span class="kbd">@moe.gov.sa</span> or <span class="kbd">@edu.sa</span>.</p>
+          </div>
+          <div class="col">
+            <h2>Already have membership?</h2>
+            <p class="muted">Resume a saved session (local device).</p>
+            <button id="btn-resume" class="btn secondary">↺ Continue</button>
+            <div class="hr"></div>
+            <button id="btn-wipe" class="btn ghost">🗑 Reset demo data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="view-dash" class="card glass hidden">
+      <div class="header">
+        <div>
+          <h1>Dashboard</h1>
+          <div class="muted">Welcome, <span id="who-name"></span> · <span class="badge" id="who-role"></span></div>
+        </div>
+        <div class="nav">
+          <button class="icon-btn" title="Notifications" id="btn-notifs">🔔</button>
+          <button class="icon-btn" title="Messages" id="btn-messages">💬</button>
+          <div class="avatar" id="avatar">U</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="grid">
+          <div class="card section">
+            <h2>Groups</h2>
+            <div class="tabs">
+              <button class="tab active" data-tab="create">Create group</button>
+              <button class="tab" data-tab="find">Find group</button>
+            </div>
+            <div id="tab-create">
+              <form id="form-create-group">
+                <label>Lesson title</label>
+                <input class="input" name="title" required placeholder="e.g., Linear Equations – Grade 8" />
+                <label>Description & objectives</label>
+                <textarea class="input" name="desc" placeholder="Brief context, learning goals, standards alignment"></textarea>
+                <div class="flex">
+                  <div class="grow"></div>
+                  <button class="btn right" type="submit">⤴ Publish group</button>
+                </div>
+              </form>
+            </div>
+            <div id="tab-find" class="hidden">
+              <div class="flex">
+                <input id="search-groups" class="input" placeholder="Search by title, teacher, subject…" />
+                <button id="btn-search-groups" class="btn secondary">Search</button>
+              </div>
+              <div style="height:10px"></div>
+              <div id="results-groups" class="list"></div>
+            </div>
+          </div>
+
+          <div class="card section">
+            <h2>My Groups</h2>
+            <div id="my-groups" class="list"></div>
+          </div>
+        </div>
+        <div class="footer">Tip: Use the <span class="kbd">⋯</span> menu inside a group to invite students, create activities, and manage content. Download content for offline access on low-connectivity.</div>
+      </div>
+    </div>
+
+    <!-- GROUP VIEW -->
+    <div id="view-group" class="card glass hidden">
+      <div class="header">
+        <div>
+          <h1 id="group-title">Group Title</h1>
+          <div class="muted">By <span id="group-owner"></span> · <span id="group-members" class="pill">0 members</span></div>
+        </div>
+        <div class="nav">
+          <button id="btn-leave" class="btn danger small">Leave group</button>
+          <button id="btn-back" class="icon-btn" title="Back to dashboard">🏠</button>
+        </div>
+      </div>
+      <div class="section">
+        <div class="row">
+          <div class="col" style="min-width:300px">
+            <div class="card section">
+              <h3>Overview</h3>
+              <div id="group-desc" class="muted" style="margin-top:6px"></div>
+              <div class="hr"></div>
+              <div class="flex">
+                <button id="btn-invite" class="btn secondary">✉ Invite students</button>
+                <button id="btn-manage-members" class="btn ghost">👥 Members</button>
+              </div>
+            </div>
+            <div style="height:16px"></div>
+            <div class="card section">
+              <h3>Resources & Content</h3>
+              <div class="small muted">Upload or link videos, text, audio, images, graphs; allow comments & downloads.</div>
+              <div class="hr"></div>
+              <form id="form-add-content">
+                <div class="row">
+                  <div class="col">
+                    <label>Type</label>
+                    <select class="input" name="ctype">
+                      <option value="video">Video URL</option>
+                      <option value="text">Article / Text</option>
+                      <option value="audio">Audio URL</option>
+                      <option value="image">Image URL</option>
+                      <option value="file">File / Link</option>
+                    </select>
+                  </div>
+                  <div class="col">
+                    <label>Title</label>
+                    <input class="input" name="title" placeholder="e.g., Intro to Linear Equations" />
+                  </div>
+                </div>
+                <label>URL or content</label>
+                <textarea class="input" name="payload" placeholder="Paste link or write text"></textarea>
+                <div class="flex">
+                  <label class="inline"><input type="checkbox" id="chk-downloadable" /> <span class="small">Allow download/offline</span></label>
+                  <div class="grow"></div>
+                  <button class="btn" type="submit">➕ Add</button>
+                </div>
+              </form>
+              <div style="height:10px"></div>
+              <div id="content-list" class="list"></div>
+            </div>
+          </div>
+
+          <div class="col" style="min-width:300px">
+            <div class="card section">
+              <h3>Activities</h3>
+              <div class="tabs">
+                <button class="tab active" data-acttab="discuss">Discussions</button>
+                <button class="tab" data-acttab="tasks">Tasks</button>
+                <button class="tab" data-acttab="projects">Projects</button>
+                <button class="tab" data-acttab="live">Live</button>
+              </div>
+              <div id="act-discuss">
+                <form id="form-new-thread">
+                  <label>Start a discussion</label>
+                  <input class="input" name="topic" placeholder="Ask a question or share an idea" />
+                  <div class="flex">
+                    <input class="input" name="link" placeholder="Optional: attach link/image/video URL" />
+                    <button class="btn secondary" type="submit">Post</button>
+                  </div>
+                </form>
+                <div style="height:8px"></div>
+                <div id="threads" class="list"></div>
+              </div>
+              <div id="act-tasks" class="hidden">
+                <form id="form-new-task">
+                  <label>Task title</label>
+                  <input class="input" name="title" placeholder="Weekly exercise set" />
+                  <div class="row">
+                    <div class="col">
+                      <label>Assigned by</label>
+                      <select class="input" name="by">
+                        <option>Teacher</option>
+                        <option>Ministry</option>
+                        <option>Experienced student</option>
+                      </select>
+                    </div>
+                    <div class="col">
+                      <label>Due date</label>
+                      <input class="input" name="due" type="date" />
+                    </div>
+                  </div>
+                  <label>Instructions / link</label>
+                  <input class="input" name="link" placeholder="e.g., worksheet link or instructions" />
+                  <div class="flex">
+                    <span class="inline small">Level: 
+                      <select name="level" class="input" style="width:auto">
+                        <option>Easy</option>
+                        <option>Medium</option>
+                        <option>Hard</option>
+                      </select></span>
+                    <div class="grow"></div>
+                    <button class="btn secondary" type="submit">Add task</button>
+                  </div>
+                </form>
+                <div class="hr"></div>
+                <div id="tasks" class="list"></div>
+              </div>
+              <div id="act-projects" class="hidden">
+                <form id="form-new-project">
+                  <label>Project title</label>
+                  <input class="input" name="title" placeholder="e.g., Linear Models in Real Life" />
+                  <label>Summary</label>
+                  <textarea class="input" name="summary" placeholder="Brief description, deliverables, timeline"></textarea>
+                  <div class="flex">
+                    <button class="btn secondary" type="submit">Create project</button>
+                  </div>
+                </form>
+                <div class="hr"></div>
+                <div id="projects" class="list"></div>
+              </div>
+              <div id="act-live" class="hidden">
+                <form id="form-new-live">
+                  <label>Session title</label>
+                  <input class="input" name="title" placeholder="Q&A with Engineer guest" />
+                  <div class="row">
+                    <div class="col">
+                      <label>Date & time</label>
+                      <input class="input" name="dt" type="datetime-local" />
+                    </div>
+                    <div class="col">
+                      <label>Guest / host</label>
+                      <input class="input" name="guest" placeholder="e.g., Aramco engineer" />
+                    </div>
+                  </div>
+                  <label>Join link</label>
+                  <input class="input" name="link" placeholder="Video conference URL" />
+                  <div class="flex">
+                    <button class="btn secondary" type="submit">Schedule</button>
+                  </div>
+                </form>
+                <div class="hr"></div>
+                <div id="live" class="list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">© Prototype for educational purposes. No external libraries. Data stored locally in browser.</div>
+  </div>
+
+  <!-- MODALS -->
+  <div id="modal" class="modal-backdrop">
+    <div class="modal">
+      <div class="header">
+        <h2 id="modal-title">Modal</h2>
+        <button class="icon-btn" id="modal-close">✖</button>
+      </div>
+      <div class="section" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
